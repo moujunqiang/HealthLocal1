@@ -1,8 +1,12 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -10,14 +14,23 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.example.myapplication.adapter.BaseFragmentAdapter;
+import com.example.myapplication.bean.HealthHistoryBean;
+import com.example.myapplication.db.HistoryDao;
 import com.example.myapplication.fragment.NewsFragment;
 import com.example.myapplication.utils.DoubleClickHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.hjq.permissions.OnPermission;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class AddHealthInfo extends AppCompatActivity implements AMapLocationListener {
 
@@ -27,14 +40,31 @@ public class AddHealthInfo extends AppCompatActivity implements AMapLocationList
 
     //标识，用于判断是否只显示一次定位信息和用户重新定位
     private boolean isFirstLoc = true;
+    private TextView tvLocal;
+    private EditText etName, etTem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_add);
+        XXPermissions.with(this).permission(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION).request(new OnPermission() {
+            @Override
+            public void hasPermission(List<String> granted, boolean all) {
+
+            }
+
+            @Override
+            public void noPermission(List<String> denied, boolean never) {
+
+            }
+        });
+        tvLocal = findViewById(R.id.tv_local);
+        etName = findViewById(R.id.et_name);
+        etTem = findViewById(R.id.et_tem);
         //开始定位
         initLocation();
     }
+
     private void initLocation() {
         mLocationClient = new AMapLocationClient(getApplicationContext());
         //设置定位回调监听
@@ -79,17 +109,50 @@ public class AddHealthInfo extends AppCompatActivity implements AMapLocationList
                     //获取定位信息
                     StringBuffer buffer = new StringBuffer();
                     buffer.append(amapLocation.getCountry() + "" + amapLocation.getProvince() + "" + amapLocation.getCity() + "" + amapLocation.getProvince() + "" + amapLocation.getDistrict() + "" + amapLocation.getStreet() + "" + amapLocation.getStreetNum());
-                    Toast.makeText(getApplicationContext(), buffer.toString(), Toast.LENGTH_LONG).show();
                     isFirstLoc = false;
+                    tvLocal.setText(buffer.toString());
                 }
             } else {
-                //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
-                Log.e("AmapError", "location Error, ErrCode:"
-                        + amapLocation.getErrorCode() + ", errInfo:"
-                        + amapLocation.getErrorInfo());
-                Toast.makeText(getApplicationContext(), "定位失败", Toast.LENGTH_LONG).show();
+                tvLocal.setText("定位失败");
+
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_new_save://保存
+                saveHistory();
+                break;
+            case R.id.action_new_giveup://放弃保存
+                finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void saveHistory() {
+        if (TextUtils.isEmpty(etName.getText().toString())) {
+            Toast.makeText(this, "请输入姓名", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(etTem.getText().toString())) {
+            Toast.makeText(this, "请输入体温", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        HealthHistoryBean healthHistoryBean = new HealthHistoryBean();
+        healthHistoryBean.setName(etName.getText().toString());
+        healthHistoryBean.setTem(etTem.getText().toString());
+        healthHistoryBean.setTime(new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new Date()));
+        healthHistoryBean.setLocation(tvLocal.getText().toString());
+        new HistoryDao(this).insertNote(healthHistoryBean);
+        finish();
     }
 
 

@@ -23,20 +23,21 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".AddHealthInfo">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AddHealthInfo"/>
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="06971b57e073f14cea781ab9b98b0011"/>
+            android:value="06971b57e073f14cea781ab9b98b0011" />
         <service android:name="com.amap.api.location.APSService"></service>
 
     </application>
