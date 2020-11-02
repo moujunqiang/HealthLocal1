@@ -57,6 +57,7 @@
             android:padding="15dp">
 
             <ImageView
+                android:id="@+id/iv_location"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/local" />
@@ -67,8 +68,10 @@
                 android:layout_height="wrap_content"
                 android:text="123" />
         </LinearLayout>
-
-
+        <com.amap.api.maps.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
 </LinearLayout>

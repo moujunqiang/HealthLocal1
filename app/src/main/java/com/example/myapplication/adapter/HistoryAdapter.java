@@ -15,9 +15,13 @@ import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryHolder> {
     List<HealthHistoryBean> healthHistoryBeans;
-
+    private OnItemClick onItemClick;
     public void setHealthHistoryBeans(List<HealthHistoryBean> healthHistoryBeans) {
         this.healthHistoryBeans = healthHistoryBeans;
+    }
+
+    public void setOnItemClick(OnItemClick onItemClick) {
+        this.onItemClick = onItemClick;
     }
 
     @NonNull
@@ -34,6 +38,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryH
         holder.tvAddress.setText(healthHistoryBean.getLocation());
         holder.tvTem.setText(healthHistoryBean.getTem());
         holder.tvTime.setText(healthHistoryBean.getTime());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClick.onItemClick(position);
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onItemClick.onLongClick(position);
+                return false;
+            }
+        });
         try {
             float tem = Float.parseFloat(healthHistoryBean.getTem());
 
@@ -66,5 +83,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryH
             tvTime = itemView.findViewById(R.id.tv_time);
 
         }
+    }
+
+    public interface OnItemClick {
+        void onLongClick(int position);
+
+        void onItemClick(int position);
     }
 }

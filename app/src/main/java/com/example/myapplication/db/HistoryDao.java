@@ -53,7 +53,7 @@ public class HistoryDao {
         cv.put("health_tem", bean.getTem());
         cv.put("health_address", bean.getLocation());
 
-        db.update("health", cv, "type_id=?", new String[]{bean.getId() + ""});
+        db.update("health", cv, "health_id=?", new String[]{bean.getId() + ""});
         db.close();
     }
 

@@ -58,6 +58,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     //定位功能
     implementation 'com.amap.api:location:latest.integration'
+    implementation 'com.amap.api:3dmap:latest.integration'
+
     implementation 'com.hjq:xxpermissions:9.0'
 
 }

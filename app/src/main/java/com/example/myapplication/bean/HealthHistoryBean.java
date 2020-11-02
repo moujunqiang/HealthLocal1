@@ -1,11 +1,12 @@
 package com.example.myapplication.bean;
 
+import java.io.Serializable;
 import java.security.interfaces.RSAMultiPrimePrivateCrtKey;
 
 /**
  * @Description 记录信息的实体类
  */
-public class HealthHistoryBean {
+public class HealthHistoryBean implements Serializable {
     private int id;
     private String name;
     private String time;
